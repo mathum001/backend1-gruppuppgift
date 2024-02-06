@@ -19,3 +19,25 @@ class Program
         StartServer();
     }
 }
+
+
+class User
+{
+    public int Id { get; set; }
+    public string UserName { get; set; }
+    public string Password { get; set; }
+}
+
+class Messages
+{
+    public int Id { get; set; }
+    public string UserName { get; set; }
+    public List<string> UserMessages { get; set; }
+
+    public Messages(int id, string userName, List<string> userMessages)
+    {
+        Id = id;
+        UserName = userName;
+        UserMessages = userMessages;
+    }
+}
