@@ -13,6 +13,15 @@ class Program
         StartClient();
     }
 
+    static void BroadcastMessage(NetworkStream stream)
+        {
+            Console.WriteLine("Enter your message:");
+            string message = Console.ReadLine();
+
+            // Send broadcast message to the server
+            string dataToSend = $"send {message}";
+            SendData(stream, dataToSend);
+
     static void SendPrivateMessage(NetworkStream stream)
         {
             Console.WriteLine("Enter recipient's username:");
@@ -24,6 +33,13 @@ class Program
             // Send private message to the server
             string dataToSend = $"sendPrivate {recipient} {message}";
             SendData(stream, dataToSend);
+      
+    static void SendData(NetworkStream stream, string data)
+        {
+            // Send the data to the server
+            byte[] dataToSend = Encoding.ASCII.GetBytes(data);
+            stream.Write(dataToSend, 0, dataToSend.Length);
+        }
 
     static void ReceiveMessages(NetworkStream stream)
         {
@@ -45,11 +61,4 @@ class Program
                 Console.WriteLine("Error receiving message from server: " + e.Message);
             }
   
-
-    static void SendData(NetworkStream stream, string data)
-        {
-            // Send the data to the server
-            byte[] dataToSend = Encoding.ASCII.GetBytes(data);
-            stream.Write(dataToSend, 0, dataToSend.Length);
-        }
 }
