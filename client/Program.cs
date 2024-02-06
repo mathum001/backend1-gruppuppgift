@@ -12,4 +12,11 @@ class Program
         Console.WriteLine("Hello Client!");
         StartClient();
     }
+
+    static void SendData(NetworkStream stream, string data)
+        {
+            // Send the data to the server
+            byte[] dataToSend = Encoding.ASCII.GetBytes(data);
+            stream.Write(dataToSend, 0, dataToSend.Length);
+        }
 }
