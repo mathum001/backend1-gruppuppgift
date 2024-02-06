@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Sockets;
 using System.Text;
 
@@ -32,5 +32,12 @@ class Program
             {
                 Console.WriteLine("Error receiving message from server: " + e.Message);
             }
+  
+
+    static void SendData(NetworkStream stream, string data)
+        {
+            // Send the data to the server
+            byte[] dataToSend = Encoding.ASCII.GetBytes(data);
+            stream.Write(dataToSend, 0, dataToSend.Length);
         }
 }
