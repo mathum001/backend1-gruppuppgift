@@ -18,4 +18,23 @@ class Program
     {
         StartServer();
     }
+
+    static int Authenticate(string userName, string passWord)
+    {
+        int id = 0;
+        IMongoCollection<User> users = FetchMongoUser();
+        User user = users.Find(x => x.UserName == userName).FirstOrDefault();
+
+        if (user != null)
+        {
+            // Verify the entered password with the stored hashed password
+            bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(passWord, user.Password);
+
+            if (isPasswordCorrect)
+            {
+                id = user.Id;
+            }
+        }
+        return id;
+    }
 }
