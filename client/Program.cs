@@ -12,4 +12,14 @@ class Program
         Console.WriteLine("Hello Client!");
         StartClient();
     }
+
+    static void BroadcastMessage(NetworkStream stream)
+        {
+            Console.WriteLine("Enter your message:");
+            string message = Console.ReadLine();
+
+            // Send broadcast message to the server
+            string dataToSend = $"send {message}";
+            SendData(stream, dataToSend);
+        }
 }
