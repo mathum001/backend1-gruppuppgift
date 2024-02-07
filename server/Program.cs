@@ -18,4 +18,17 @@ class Program
     {
         StartServer();
     }
+
+    static string GetUsernameByStream(NetworkStream stream)
+    {
+        foreach (var kvp in userStreams)
+        {
+            if (kvp.Value == stream)
+            {
+                return kvp.Key; // Returnerar användarnamnet om nätverksströmmen matchar
+            }
+        }
+        return null; // Returnerar null om ingen matchning hittades
+    }
+    
 }
