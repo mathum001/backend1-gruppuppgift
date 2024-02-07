@@ -8,25 +8,27 @@
     "net8.0": []
   },
   "packageFolders": {
-    "C:\\Users\\HP\\.nuget\\packages\\": {}
+    "C:\\Users\\Matsjö\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\HP\\backend1-gruppuppgift\\client\\client.csproj",
+      "projectUniqueName": "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\client\\client.csproj",
       "projectName": "client",
-      "projectPath": "C:\\Users\\HP\\backend1-gruppuppgift\\client\\client.csproj",
-      "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\HP\\backend1-gruppuppgift\\client\\obj\\",
+      "projectPath": "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\client\\client.csproj",
+      "packagesPath": "C:\\Users\\Matsjö\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\client\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Matsjö\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "https://api.nuget.org/v3/index.json": {}
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://www.nuget.org/api/v2/": {}
       },
       "frameworks": {
         "net8.0": {

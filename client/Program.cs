@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Net.Sockets;
 using System.Text;
 
@@ -21,16 +21,25 @@ namespace Client
 
                 NetworkStream stream = client.GetStream();
 
-                Console.WriteLine("Enter 'register' or 'login':");
-                string userInput = Console.ReadLine();
+                while (true)
+                {
+                    Console.WriteLine("Enter 'register' or 'login':");
+                    string userInput = Console.ReadLine();
 
-                if (userInput?.ToLower() == "register")
-                {
-                    RegisterUser(stream);
-                }
-                else if (userInput?.ToLower() == "login")
-                {
-                    LoginUser(stream);
+                    if (userInput?.ToLower() == "register")
+                    {
+                        RegisterUser(stream);
+                        break;
+                    }
+                    else if (userInput?.ToLower() == "login")
+                    {
+                        LoginUser(stream);
+                        break;
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("Error, wrong command");
+                    }
                 }
 
                 //Ny tråd som lyssnar på medd från servern

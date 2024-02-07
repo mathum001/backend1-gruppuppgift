@@ -92,15 +92,19 @@ class Program
                 string parameters = dataReceived.Substring(command.Length).Trim();
 
                 // Kolla om det finns en definierad åtgärd för det mottagna kommandot
+
                 if (commandActions.ContainsKey(command))
                 {
                     commandActions[command].Invoke(parameters, stream);
+
                 }
                 else
                 {
                     System.Console.WriteLine("Felaktigt kommando " + command);
                     SendMessage(" Ogiltigt kommando" + command, stream);
                 }
+
+
             }
         }
         catch (Exception e)
@@ -117,7 +121,7 @@ class Program
     {
         // Skriv ut ett meddelande till konsolen för att indikera att registrering försöks
         System.Console.WriteLine("Du försökte göra en registrering" + parameters);
-        
+
         // Dela upp parametrarna för registreringen (antagande av att användarnamn och lösenord är skilda av ett mellanslag)
         string[] data = parameters.Split(" ");
 
@@ -256,7 +260,7 @@ class Program
         // Hämta avsändarens användarnamn med hjälp av nätverksströmmen
         string username = GetUsernameByStream(senderStream);
 
-         // Skapa meddelandet som ska skickas, inklusive användarnamn och själva meddelandet
+        // Skapa meddelandet som ska skickas, inklusive användarnamn och själva meddelandet
         string messageToSend = $"{username + " skickade: " + message}";
 
         // Loopa igenom alla användarströmmar
@@ -267,9 +271,9 @@ class Program
             {
                 // Konvertera meddelandet till byte-array för att skicka över nätverket
                 byte[] dataToSend = Encoding.ASCII.GetBytes(messageToSend);
-                  // Skicka meddelandet till den aktuella användarströmmen
+                // Skicka meddelandet till den aktuella användarströmmen
                 kvp.Value.Write(dataToSend, 0, dataToSend.Length);
-                 // Lägg till det enskilda meddelandet i databasen för varje mottagare
+                // Lägg till det enskilda meddelandet i databasen för varje mottagare
                 AddSingleMessageToDB(kvp.Value, message);
             }
 
@@ -281,7 +285,7 @@ class Program
         // Dela upp parametrarna för det privata meddelandet (antagande av att användarnamn och meddelande är skilda av ett mellanslag)
         string[] data = parameters.Split(" ");
 
-         // Kontrollera att det finns minst två delar i parametrarna
+        // Kontrollera att det finns minst två delar i parametrarna
         if (data.Length < 2)
         {
             Console.WriteLine("Incorrect private message format.");
@@ -354,7 +358,7 @@ class Program
             }
         }
         // Returnerar null om ingen matchning hittades
-        return null; 
+        return null;
     }
 
     static string AddSingleMessageToDB(NetworkStream stream, string message)
@@ -369,7 +373,7 @@ class Program
         // Skapa inställningar för MongoDB-klienten baserat på anslutningsinformationen
         var settings = MongoClientSettings.FromConnectionString(connectionUri);
 
-         // Ange ServerApi-fältet i inställningsobjektet till stabil API-version 1
+        // Ange ServerApi-fältet i inställningsobjektet till stabil API-version 1
         settings.ServerApi = new ServerApi(ServerApiVersion.V1);
 
         // Skapa en ny klient och anslut till servern
@@ -427,16 +431,16 @@ class Program
         // Sätt upp anslutningsinformationen för MongoDB-databasen
         const string newpass = "KokxLPCVbH0hKrp2";
         string connectionUri = "mongodb+srv://mattiashummer:" + newpass + "@cluster0.y5yh9uz.mongodb.net/?retryWrites=true&w=majority";
-        
+
         // Skapa inställningar för MongoDB-klienten baserat på anslutningsinformationen
         var settings = MongoClientSettings.FromConnectionString(connectionUri);
-        
+
         // Ange ServerApi-fältet i inställningsobjektet till stabil API-version 1
         settings.ServerApi = new ServerApi(ServerApiVersion.V1);
-        
+
         // Skapa en ny klient och anslut till servern
         var client = new MongoClient(settings);
-        
+
         // Skicka en ping för att bekräfta en lyckad anslutning
         try
         {
@@ -449,13 +453,13 @@ class Program
         }
         // anslut till den önskade databasen
         var database = client.GetDatabase("testing");
-        
+
         // Anslut till den önskade kollektionen (i detta fall, "messages")
         IMongoCollection<Messages> collection = database.GetCollection<Messages>("messages");
 
         // Hämta befintliga meddelanden för användaren från databasen
         Messages existingMessages = collection.Find(x => x.UserName == username).FirstOrDefault();
-        
+
         // Om det inte finns befintliga meddelanden för användaren, skapa en temporär instans och lägg till den i databasen
         if (existingMessages == null)
         {

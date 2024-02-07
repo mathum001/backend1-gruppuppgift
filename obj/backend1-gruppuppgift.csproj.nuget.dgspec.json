@@ -1,26 +1,28 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\HP\\backend1-gruppuppgift\\backend1-gruppuppgift.csproj": {}
+    "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\backend1-gruppuppgift.csproj": {}
   },
   "projects": {
-    "C:\\Users\\HP\\backend1-gruppuppgift\\backend1-gruppuppgift.csproj": {
+    "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\backend1-gruppuppgift.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\HP\\backend1-gruppuppgift\\backend1-gruppuppgift.csproj",
+        "projectUniqueName": "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\backend1-gruppuppgift.csproj",
         "projectName": "backend1-gruppuppgift",
-        "projectPath": "C:\\Users\\HP\\backend1-gruppuppgift\\backend1-gruppuppgift.csproj",
-        "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\HP\\backend1-gruppuppgift\\obj\\",
+        "projectPath": "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\backend1-gruppuppgift.csproj",
+        "packagesPath": "C:\\Users\\Matsjö\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Matsjö\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "https://api.nuget.org/v3/index.json": {}
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://www.nuget.org/api/v2/": {}
         },
         "frameworks": {
           "net8.0": {
