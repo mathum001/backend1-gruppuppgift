@@ -18,4 +18,10 @@ class Program
     {
         StartServer();
     }
+
+    static void Add(IMongoCollection<User> collection, User user)
+    {
+        collection.InsertOne(user);
+        System.Console.WriteLine("Användare registrerad!");
+    }
 }
