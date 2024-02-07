@@ -1,0 +1,5 @@
+C:\Users\Matsjö\Documents\GitHub\backend1-gruppuppgift\obj\Debug\net8.0\backend1-gruppuppgift.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Matsjö\Documents\GitHub\backend1-gruppuppgift\obj\Debug\net8.0\backend1-gruppuppgift.AssemblyInfoInputs.cache
+C:\Users\Matsjö\Documents\GitHub\backend1-gruppuppgift\obj\Debug\net8.0\backend1-gruppuppgift.AssemblyInfo.cs
+C:\Users\Matsjö\Documents\GitHub\backend1-gruppuppgift\obj\Debug\net8.0\backend1-gruppuppgift.csproj.CoreCompileInputs.cache
+C:\Users\Matsjö\Documents\GitHub\backend1-gruppuppgift\obj\Debug\net8.0\backend1-gruppuppgift.sourcelink.json

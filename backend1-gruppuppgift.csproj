@@ -8,4 +8,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MongoDB.driver" Version="2.23.1" />
+  </ItemGroup>
+
 </Project>
