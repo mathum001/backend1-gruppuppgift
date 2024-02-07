@@ -311,15 +311,18 @@ class Program
 
     static IMongoCollection<User> FetchMongoUser()
     {
+        // Sätt upp anslutningsinformationen för MongoDB-databasen
         const string newpass = "KokxLPCVbH0hKrp2";
         string connectionUri = "mongodb+srv://mattiashummer:" + newpass + "@cluster0.y5yh9uz.mongodb.net/?retryWrites=true&w=majority";
 
+        // Skapa inställningar för MongoDB-klienten baserat på anslutningsinformationen
         var settings = MongoClientSettings.FromConnectionString(connectionUri);
-        // Set the ServerApi field of the settings object to Stable API version 1
+        // Ange ServerApi-fältet i inställningsobjektet till stabil API-version 1
         settings.ServerApi = new ServerApi(ServerApiVersion.V1);
-        // Create a new client and connect to the server
+        // Skapa en ny klient och anslut till servern
         var client = new MongoClient(settings);
-        // Send a ping to confirm a successful connection
+
+        // Skicka en ping för att bekräfta en lyckad anslutning
         try
         {
             var result = client.GetDatabase("admin").RunCommand<BsonDocument>(new BsonDocument("ping", 1));
@@ -329,9 +332,9 @@ class Program
         {
             Console.WriteLine(ex);
         }
-        // anslut till databasen
+        // Anslut till den önskade databasen
         var database = client.GetDatabase("testing");
-        //anslut till kollektion
+        // Anslut till den önskade kollektionen (i detta fall, "users")
         IMongoCollection<User> collection = database.GetCollection<User>("users");
 
         return collection;
@@ -340,26 +343,39 @@ class Program
 
     static string GetUsernameByStream(NetworkStream stream)
     {
+        // Loopa igenom varje par (Key-Value) i userStreams-dictionaryn
         foreach (var kvp in userStreams)
         {
+            // Kontrollera om nätverksströmmen matchar den aktuella användaren i dictionaryn
             if (kvp.Value == stream)
             {
-                return kvp.Key; // Returnerar användarnamnet om nätverksströmmen matchar
+                // Returnera användarnamnet om nätverksströmmen matchar
+                return kvp.Key;
             }
         }
-        return null; // Returnerar null om ingen matchning hittades
+        // Returnerar null om ingen matchning hittades
+        return null; 
     }
 
     static string AddSingleMessageToDB(NetworkStream stream, string message)
     {
-
+        // Hämta användarnamnet baserat på nätverksströmmen
         string username = GetUsernameByStream(stream);
+
+        // Sätt upp anslutningsinformationen för MongoDB-databasen
         const string newpass = "KokxLPCVbH0hKrp2";
         string connectionUri = "mongodb+srv://mattiashummer:" + newpass + "@cluster0.y5yh9uz.mongodb.net/?retryWrites=true&w=majority";
 
+        // Skapa inställningar för MongoDB-klienten baserat på anslutningsinformationen
         var settings = MongoClientSettings.FromConnectionString(connectionUri);
+
+         // Ange ServerApi-fältet i inställningsobjektet till stabil API-version 1
         settings.ServerApi = new ServerApi(ServerApiVersion.V1);
+
+        // Skapa en ny klient och anslut till servern
         var client = new MongoClient(settings);
+
+        // Skicka en ping för att bekräfta en lyckad anslutning
         try
         {
             var result = client.GetDatabase("admin").RunCommand<BsonDocument>(new BsonDocument("ping", 1));
@@ -369,30 +385,37 @@ class Program
         {
             Console.WriteLine(ex);
         }
-        // anslut till databasen samt lägger till en
+        // Anslut till den önskade databasen
         var database = client.GetDatabase("testing");
 
+        // Anslut till den önskade kollektionen (i detta fall, "messages")
         IMongoCollection<Messages> messageCollection = database.GetCollection<Messages>("messages");
 
+        // Skapa filter för att hitta rätt användare
         var filter = Builders<Messages>.Filter.Eq(message => message.UserName, username);
+
+        // Skapa uppdatering för att lägga till det nya meddelandet
         var update = Builders<Messages>.Update.Push(message => message.UserMessages, message);
 
+        // Hantera antalet meddelanden för varje användare
         int maxMessages = 29;
         var userMessages = FetchMongoMessages(username).UserMessages;
+
+        // Om antalet meddelanden överstiger maxMessages, ta bort det äldsta meddelandet
         if (userMessages.Count > maxMessages)
         {
             var oldestMessage = userMessages.FirstOrDefault();
 
+            // Uppdatera collectionen för att ta bort det äldsta meddelandet
             messageCollection.UpdateOne(
                 Builders<Messages>.Filter.Eq("UserName", username),
                 Builders<Messages>.Update.Pull("UserMessages", oldestMessage)
             );
         }
-
+        // Uppdatera collectionen med det nya meddelandet
         messageCollection.UpdateOne(filter, update);
 
-
-
+        // Returnera null (om ingen särskild returinformation behövs)
         return null;
     }
 
