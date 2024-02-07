@@ -19,6 +19,7 @@ class Program
         StartServer();
     }
 
+
     static string GetUsernameByStream(NetworkStream stream)
     {
         foreach (var kvp in userStreams)
@@ -72,6 +73,10 @@ class Program
                 // Skicka tillbaka det mottagna meddelandet till klienten
                 /* byte[] dataToSend = Encoding.ASCII.GetBytes(dataReceived);
                 stream.Write(dataToSend, 0, dataToSend.Length); */
+
+
+
+
             }
         }
         catch (Exception e)
@@ -83,6 +88,7 @@ class Program
             client.Close();
         }
     }
+
     static void LoginUser(string parameters, NetworkStream stream)
     {
         System.Console.WriteLine("Du försökte logga in" + parameters);
@@ -163,6 +169,56 @@ class Program
             }
 
             Add(users, newUser);
+
+
+            Console.WriteLine("Error: " + e.Message);
+        }
+        finally
+        {
+            // Stäng servern
+            server?.Stop();
+        }
+    }
+
+    static void StartServer()
+    {
+        TcpListener server = null;
+        try
+        {
+            // Ange IP-adressen och porten som servern ska lyssna på
+            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+            int port = 8080;
+
+            // Skapa en TCP-listener på den angivna IP-adressen och porten
+            server = new TcpListener(ipAddress, port);
+
+            // Starta lyssnaren
+            server.Start();
+            Console.WriteLine("Servern är igång och lyssnar på port " + port);
+
+
+
+            while (true)
+            {
+                // Vänta på en anslutning från en klient
+                TcpClient client = server.AcceptTcpClient();
+                Console.WriteLine("En klient har anslutit.");
+
+                //ny tråd för separata klienter
+                Thread clientThread = new Thread(HandleClient);
+                clientThread.Start(client);
+
+
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error: " + e.Message);
+        }
+        finally
+        {
+            // Stäng servern
+            server?.Stop();
 
         }
     }
