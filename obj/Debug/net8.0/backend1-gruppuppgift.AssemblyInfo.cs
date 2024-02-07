@@ -18,6 +18,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b21fbe0617ca67055a1220d0b60a3bcdf93c89c2")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f817d91f18d3f662701934825f556be56cea6de3")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+918348cb4a71f75088e83f776dcec30b0540cc3c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+39e434227f7c71ab8d0ea24783cb691c605354a3")]
 [assembly: System.Reflection.AssemblyProductAttribute("backend1-gruppuppgift")]
 [assembly: System.Reflection.AssemblyTitleAttribute("backend1-gruppuppgift")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
