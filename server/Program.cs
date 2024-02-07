@@ -231,16 +231,20 @@ class Program
     static int Authenticate(string userName, string passWord)
     {
         int id = 0;
+
+        // Hämta MongoDB-kollektionen för användare
         IMongoCollection<User> users = FetchMongoUser();
+        // Hämta användaren från databasen baserat på användarnamnet
         User user = users.Find(x => x.UserName == userName).FirstOrDefault();
 
         if (user != null)
         {
-            // Verify the entered password with the stored hashed password
+            // Verifiera det angivna lösenordet med det lagrade krypterade lösenordet
             bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(passWord, user.Password);
 
             if (isPasswordCorrect)
             {
+                // Om lösenordet är korrekt, sätt ID:t till användarens ID
                 id = user.Id;
             }
         }
@@ -249,14 +253,23 @@ class Program
 
     static void SendMessage(string message, NetworkStream senderStream)
     {
+        // Hämta avsändarens användarnamn med hjälp av nätverksströmmen
         string username = GetUsernameByStream(senderStream);
+
+         // Skapa meddelandet som ska skickas, inklusive användarnamn och själva meddelandet
         string messageToSend = $"{username + " skickade: " + message}";
+
+        // Loopa igenom alla användarströmmar
         foreach (var kvp in userStreams)
         {
+            // Kontrollera att det inte är samma ström som avsändaren
             if (kvp.Value != senderStream)
             {
+                // Konvertera meddelandet till byte-array för att skicka över nätverket
                 byte[] dataToSend = Encoding.ASCII.GetBytes(messageToSend);
+                  // Skicka meddelandet till den aktuella användarströmmen
                 kvp.Value.Write(dataToSend, 0, dataToSend.Length);
+                 // Lägg till det enskilda meddelandet i databasen för varje mottagare
                 AddSingleMessageToDB(kvp.Value, message);
             }
 
@@ -265,26 +278,34 @@ class Program
 
     static void SendPrivateMessage(string parameters, NetworkStream senderStream)
     {
+        // Dela upp parametrarna för det privata meddelandet (antagande av att användarnamn och meddelande är skilda av ett mellanslag)
         string[] data = parameters.Split(" ");
+
+         // Kontrollera att det finns minst två delar i parametrarna
         if (data.Length < 2)
         {
             Console.WriteLine("Incorrect private message format.");
             return;
         }
+        // Hämta användarnamnet för avsändaren baserat på nätverksströmmen
         string sender = GetUsernameByStream(senderStream);
+        // Hämta användarnamnet för mottagaren och meddelandet från parametrarna
         string recipient = data[0];
         string message = sender + ": " + parameters.Substring(recipient.Length).Trim();
 
+        // Kontrollera om mottagaren är online
         if (userStreams.TryGetValue(recipient, out NetworkStream recipientStream))
         {
+            // Konvertera meddelandet till byte-array för att skicka över nätverket
             byte[] dataToSend = Encoding.ASCII.GetBytes(message);
             recipientStream.Write(dataToSend, 0, dataToSend.Length);
         }
         else
         {
+            // Skriv ut meddelande om att användaren inte hittades eller är offline
             Console.WriteLine($"User '{recipient}' not found or offline.");
         }
-
+        // Lägg till det enskilda meddelandet i databasen
         AddSingleMessageToDB(recipientStream, message);
     }
 
