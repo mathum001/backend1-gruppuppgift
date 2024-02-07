@@ -1,28 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\backend1-gruppuppgift.csproj": {}
+    "C:\\Users\\marcu\\Documents\\GitHub\\backend-gruppuppgift\\backend1-gruppuppgift.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\backend1-gruppuppgift.csproj": {
+    "C:\\Users\\marcu\\Documents\\GitHub\\backend-gruppuppgift\\backend1-gruppuppgift.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\backend1-gruppuppgift.csproj",
+        "projectUniqueName": "C:\\Users\\marcu\\Documents\\GitHub\\backend-gruppuppgift\\backend1-gruppuppgift.csproj",
         "projectName": "backend1-gruppuppgift",
-        "projectPath": "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\backend1-gruppuppgift.csproj",
-        "packagesPath": "C:\\Users\\Matsjö\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\obj\\",
+        "projectPath": "C:\\Users\\marcu\\Documents\\GitHub\\backend-gruppuppgift\\backend1-gruppuppgift.csproj",
+        "packagesPath": "C:\\Users\\marcu\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\marcu\\Documents\\GitHub\\backend-gruppuppgift\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Matsjö\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\marcu\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://www.nuget.org/api/v2/": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
