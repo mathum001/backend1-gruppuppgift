@@ -1,26 +1,28 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\marcu\\Documents\\GitHub\\backend-gruppuppgift\\Server\\server.csproj": {}
+    "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\server\\server.csproj": {}
   },
   "projects": {
-    "C:\\Users\\marcu\\Documents\\GitHub\\backend-gruppuppgift\\Server\\server.csproj": {
+    "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\server\\server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\marcu\\Documents\\GitHub\\backend-gruppuppgift\\Server\\server.csproj",
+        "projectUniqueName": "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\server\\server.csproj",
         "projectName": "server",
-        "projectPath": "C:\\Users\\marcu\\Documents\\GitHub\\backend-gruppuppgift\\Server\\server.csproj",
-        "packagesPath": "C:\\Users\\marcu\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\marcu\\Documents\\GitHub\\backend-gruppuppgift\\Server\\obj\\",
+        "projectPath": "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\server\\server.csproj",
+        "packagesPath": "C:\\Users\\Matsjö\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Matsjö\\Documents\\GitHub\\backend1-gruppuppgift\\server\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\marcu\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Matsjö\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "https://api.nuget.org/v3/index.json": {}
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://www.nuget.org/api/v2/": {}
         },
         "frameworks": {
           "net8.0": {
@@ -41,6 +43,10 @@
             "BCrypt.Net": {
               "target": "Package",
               "version": "[0.1.0, )"
+            },
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[2.23.1, )"
             }
           },
           "imports": [

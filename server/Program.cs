@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿
+using MongoDB.Driver;
 using MongoDB.Bson;
 using Microsoft.VisualBasic;
 using MongoDB.Bson.Serialization.Attributes;
@@ -10,7 +11,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Data.Common;
-namespace server;
+
+namespace Server;
 
 class Program
 {
@@ -18,59 +20,51 @@ class Program
     {
         StartServer();
 
-        static IMongoCollection<User> FetchMongoUser()
-        {
-            const string newpass = "KokxLPCVbH0hKrp2";
-            string connectionUri = "mongodb+srv://mattiashummer:" + newpass + "@cluster0.y5yh9uz.mongodb.net/?retryWrites=true&w=majority";
-
-            var settings = MongoClientSettings.FromConnectionString(connectionUri);
-            // Set the ServerApi field of the settings object to Stable API version 1
-            settings.ServerApi = new ServerApi(ServerApiVersion.V1);
-            // Create a new client and connect to the server
-            var client = new MongoClient(settings);
-            // Send a ping to confirm a successful connection
-            try
-            {
-                var result = client.GetDatabase("admin").RunCommand<BsonDocument>(new BsonDocument("ping", 1));
-                Console.WriteLine("Pinged your deployment. You successfully connected to MongoDB!");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-            // anslut till databasen
-            var database = client.GetDatabase("testing");
-            //anslut till kollektion
-            IMongoCollection<User> collection = database.GetCollection<User>("users");
-
-            return collection;
-        }
     }
 
 
-    //Dictionary för commands
-    static Dictionary<string, Action<string, NetworkStream>> commandActions = new Dictionary<string, Action<string, NetworkStream>>()
-                {
-                    { "register", RegisterUser},
-                    { "login", LoginUser},
-                    { "send", SendMessage},
-                    { "sendPrivate", SendPrivateMessage},
-                };
-
-    //Dictionary för att servern ska hålla koll på vilken användare som är vilken
-    static Dictionary<string, NetworkStream> userStreams = new Dictionary<string, NetworkStream>();
-
-    static string GetUsernameByStream(NetworkStream stream)
+    static void StartServer()
     {
-        foreach (var kvp in userStreams)
+        TcpListener server = null;
+        try
         {
-            if (kvp.Value == stream)
+            // Ange IP-adressen och porten som servern ska lyssna på
+            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+            int port = 8080;
+
+            // Skapa en TCP-listener på den angivna IP-adressen och porten
+            server = new TcpListener(ipAddress, port);
+
+            // Starta lyssnaren
+            server.Start();
+            Console.WriteLine("Servern är igång och lyssnar på port " + port);
+
+
+
+            while (true)
             {
-                return kvp.Key; // Returnerar användarnamnet om nätverksströmmen matchar
+                // Vänta på en anslutning från en klient
+                TcpClient client = server.AcceptTcpClient();
+                Console.WriteLine("En klient har anslutit.");
+
+                //ny tråd för separata klienter
+                Thread clientThread = new Thread(HandleClient);
+                clientThread.Start(client);
+
             }
         }
-        return null; // Returnerar null om ingen matchning hittades
+        catch (Exception e)
+        {
+            Console.WriteLine("Error: " + e.Message);
+        }
+        finally
+        {
+            // Stäng servern
+            server?.Stop();
+        }
     }
+
+
 
     static void HandleClient(object klient)
     {
@@ -113,10 +107,6 @@ class Program
                 // Skicka tillbaka det mottagna meddelandet till klienten
                 /* byte[] dataToSend = Encoding.ASCII.GetBytes(dataReceived);
                 stream.Write(dataToSend, 0, dataToSend.Length); */
-
-
-
-
             }
         }
         catch (Exception e)
@@ -127,6 +117,53 @@ class Program
         {
             client.Close();
         }
+    }
+
+    static void RegisterUser(string parameters, NetworkStream stream)
+    {
+        System.Console.WriteLine("Du försökte göra en registrering" + parameters);
+        string[] data = parameters.Split(" ");
+        if (data.Length < 2)
+        {
+            Console.WriteLine("Felaktigt format på registrering.");
+            return;
+        }
+        else
+        {
+            string userName = data[0];
+            string password = data[1];
+            Random random = new Random();
+            int randomTal = random.Next(1, 1000);
+
+            // Hash the user's password
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+
+            User newUser = new User
+            {
+                Id = randomTal,
+                UserName = userName,
+                Password = hashedPassword // Store hashed password in the database
+            };
+
+            IMongoCollection<User> users = FetchMongoUser();
+            User existingUser = users.Find(x => x.UserName == userName).FirstOrDefault();
+
+
+            if (existingUser != null)
+            {
+                System.Console.WriteLine("Användarnamnet är upptaget");
+                return;
+            }
+
+            Add(users, newUser);
+
+        }
+    }
+
+    static void Add(IMongoCollection<User> collection, User user)
+    {
+        collection.InsertOne(user);
+        System.Console.WriteLine("Användare registrerad!");
     }
 
     static void LoginUser(string parameters, NetworkStream stream)
@@ -171,7 +208,28 @@ class Program
             }
 
         }
+
     }
+
+    static int Authenticate(string userName, string passWord)
+    {
+        int id = 0;
+        IMongoCollection<User> users = FetchMongoUser();
+        User user = users.Find(x => x.UserName == userName).FirstOrDefault();
+
+        if (user != null)
+        {
+            // Verify the entered password with the stored hashed password
+            bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(passWord, user.Password);
+
+            if (isPasswordCorrect)
+            {
+                id = user.Id;
+            }
+        }
+        return id;
+    }
+
     static void SendMessage(string message, NetworkStream senderStream)
     {
         string username = GetUsernameByStream(senderStream);
@@ -187,96 +245,7 @@ class Program
 
         }
     }
-    static void RegisterUser(string parameters, NetworkStream stream)
-    {
-        System.Console.WriteLine("Du försökte göra en registrering" + parameters);
-        string[] data = parameters.Split(" ");
-        if (data.Length < 2)
-        {
-            Console.WriteLine("Felaktigt format på registrering.");
-            return;
-        }
-        else
-        {
-            string userName = data[0];
-            string password = data[1];
-            Random random = new Random();
-            int randomTal = random.Next(1, 1000);
 
-            // Hash the user's password
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
-
-            User newUser = new User
-            {
-                Id = randomTal,
-                UserName = userName,
-                Password = hashedPassword // Store hashed password in the database
-            };
-
-            IMongoCollection<User> users = FetchMongoUser();
-            User existingUser = users.Find(x => x.UserName == userName).FirstOrDefault();
-
-
-            if (existingUser != null)
-            {
-                System.Console.WriteLine("Användarnamnet är upptaget");
-                return;
-            }
-
-            Add(users, newUser);
-
-
-            Console.WriteLine("Error: " + e.Message);
-        }
-        finally
-        {
-            // Stäng servern
-            server?.Stop();
-        }
-    }
-
-    static void StartServer()
-    {
-        TcpListener server = null;
-        try
-        {
-            // Ange IP-adressen och porten som servern ska lyssna på
-            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-            int port = 8080;
-
-            // Skapa en TCP-listener på den angivna IP-adressen och porten
-            server = new TcpListener(ipAddress, port);
-
-            // Starta lyssnaren
-            server.Start();
-            Console.WriteLine("Servern är igång och lyssnar på port " + port);
-
-
-
-            while (true)
-            {
-                // Vänta på en anslutning från en klient
-                TcpClient client = server.AcceptTcpClient();
-                Console.WriteLine("En klient har anslutit.");
-
-                //ny tråd för separata klienter
-                Thread clientThread = new Thread(HandleClient);
-                clientThread.Start(client);
-
-
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Error: " + e.Message);
-        }
-        finally
-        {
-            // Stäng servern
-            server?.Stop();
-
-        }
-    }
     static void SendPrivateMessage(string parameters, NetworkStream senderStream)
     {
         string[] data = parameters.Split(" ");
@@ -301,11 +270,48 @@ class Program
 
         AddSingleMessageToDB(recipientStream, message);
     }
-    static void Add(IMongoCollection<User> collection, User user)
+
+    static IMongoCollection<User> FetchMongoUser()
     {
-        collection.InsertOne(user);
-        System.Console.WriteLine("Användare registrerad!");
+        const string newpass = "KokxLPCVbH0hKrp2";
+        string connectionUri = "mongodb+srv://mattiashummer:" + newpass + "@cluster0.y5yh9uz.mongodb.net/?retryWrites=true&w=majority";
+
+        var settings = MongoClientSettings.FromConnectionString(connectionUri);
+        // Set the ServerApi field of the settings object to Stable API version 1
+        settings.ServerApi = new ServerApi(ServerApiVersion.V1);
+        // Create a new client and connect to the server
+        var client = new MongoClient(settings);
+        // Send a ping to confirm a successful connection
+        try
+        {
+            var result = client.GetDatabase("admin").RunCommand<BsonDocument>(new BsonDocument("ping", 1));
+            Console.WriteLine("Pinged your deployment. You successfully connected to MongoDB!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+        // anslut till databasen
+        var database = client.GetDatabase("testing");
+        //anslut till kollektion
+        IMongoCollection<User> collection = database.GetCollection<User>("users");
+
+        return collection;
     }
+
+
+    static string GetUsernameByStream(NetworkStream stream)
+    {
+        foreach (var kvp in userStreams)
+        {
+            if (kvp.Value == stream)
+            {
+                return kvp.Key; // Returnerar användarnamnet om nätverksströmmen matchar
+            }
+        }
+        return null; // Returnerar null om ingen matchning hittades
+    }
+
     static string AddSingleMessageToDB(NetworkStream stream, string message)
     {
 
@@ -316,7 +322,6 @@ class Program
         var settings = MongoClientSettings.FromConnectionString(connectionUri);
         settings.ServerApi = new ServerApi(ServerApiVersion.V1);
         var client = new MongoClient(settings);
-
         try
         {
             var result = client.GetDatabase("admin").RunCommand<BsonDocument>(new BsonDocument("ping", 1));
@@ -334,19 +339,39 @@ class Program
         var filter = Builders<Messages>.Filter.Eq(message => message.UserName, username);
         var update = Builders<Messages>.Update.Push(message => message.UserMessages, message);
 
+        int maxMessages = 29;
+        var userMessages = FetchMongoMessages(username).UserMessages;
+        if (userMessages.Count > maxMessages)
+        {
+            var oldestMessage = userMessages.FirstOrDefault();
+
+            messageCollection.UpdateOne(
+                Builders<Messages>.Filter.Eq("UserName", username),
+                Builders<Messages>.Update.Pull("UserMessages", oldestMessage)
+            );
+        }
+
         messageCollection.UpdateOne(filter, update);
 
 
 
         return null;
     }
+
+
+
+
     static Messages FetchMongoMessages(string username)
     {
         const string newpass = "KokxLPCVbH0hKrp2";
         string connectionUri = "mongodb+srv://mattiashummer:" + newpass + "@cluster0.y5yh9uz.mongodb.net/?retryWrites=true&w=majority";
 
         var settings = MongoClientSettings.FromConnectionString(connectionUri);
-
+        // Set the ServerApi field of the settings object to Stable API version 1
+        settings.ServerApi = new ServerApi(ServerApiVersion.V1);
+        // Create a new client and connect to the server
+        var client = new MongoClient(settings);
+        // Send a ping to confirm a successful connection
         try
         {
             var result = client.GetDatabase("admin").RunCommand<BsonDocument>(new BsonDocument("ping", 1));
@@ -373,24 +398,19 @@ class Program
         return existingMessages;
     }
 
-    static int Authenticate(string userName, string passWord)
-    {
-        int id = 0;
-        IMongoCollection<User> users = FetchMongoUser();
-        User user = users.Find(x => x.UserName == userName).FirstOrDefault();
 
-        if (user != null)
-        {
-            // Verify the entered password with the stored hashed password
-            bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(passWord, user.Password);
+    //Dictionary för commands
+    static Dictionary<string, Action<string, NetworkStream>> commandActions = new Dictionary<string, Action<string, NetworkStream>>()
+                {
+                    { "register", RegisterUser},
+                    { "login", LoginUser},
+                    { "send", SendMessage},
+                    { "sendPrivate", SendPrivateMessage},
+                };
 
-            if (isPasswordCorrect)
-            {
-                id = user.Id;
-            }
-        }
-        return id;
-    }
+    //Dictionary för att servern ska hålla koll på vilken användare som är vilken
+    static Dictionary<string, NetworkStream> userStreams = new Dictionary<string, NetworkStream>();
+
 }
 
 class User
@@ -413,3 +433,5 @@ class Messages
         UserMessages = userMessages;
     }
 }
+
+
