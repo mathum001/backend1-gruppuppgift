@@ -18,4 +18,20 @@ class Program
     {
         StartServer();
     }
+
+    static void SendMessage(string message, NetworkStream senderStream)
+    {
+        string username = GetUsernameByStream(senderStream);
+        string messageToSend = $"{username + " skickade: " + message}";
+        foreach (var kvp in userStreams)
+        {
+            if (kvp.Value != senderStream)
+            {
+                byte[] dataToSend = Encoding.ASCII.GetBytes(messageToSend);
+                kvp.Value.Write(dataToSend, 0, dataToSend.Length);
+                AddSingleMessageToDB(kvp.Value, message);
+            }
+
+        }
+    }
 }
