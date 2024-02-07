@@ -18,4 +18,17 @@ class Program
     {
         StartServer();
     }
+
+    //Dictionary för commands
+    static Dictionary<string, Action<string, NetworkStream>> commandActions = new Dictionary<string, Action<string, NetworkStream>>()
+                {
+                    { "register", RegisterUser},
+                    { "login", LoginUser},
+                    { "send", SendMessage},
+                    { "sendPrivate", SendPrivateMessage},
+                };
+
+    //Dictionary för att servern ska hålla koll på vilken användare som är vilken
+    static Dictionary<string, NetworkStream> userStreams = new Dictionary<string, NetworkStream>();
+    
 }
