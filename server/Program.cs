@@ -424,15 +424,20 @@ class Program
 
     static Messages FetchMongoMessages(string username)
     {
+        // Sätt upp anslutningsinformationen för MongoDB-databasen
         const string newpass = "KokxLPCVbH0hKrp2";
         string connectionUri = "mongodb+srv://mattiashummer:" + newpass + "@cluster0.y5yh9uz.mongodb.net/?retryWrites=true&w=majority";
-
+        
+        // Skapa inställningar för MongoDB-klienten baserat på anslutningsinformationen
         var settings = MongoClientSettings.FromConnectionString(connectionUri);
-        // Set the ServerApi field of the settings object to Stable API version 1
+        
+        // Ange ServerApi-fältet i inställningsobjektet till stabil API-version 1
         settings.ServerApi = new ServerApi(ServerApiVersion.V1);
-        // Create a new client and connect to the server
+        
+        // Skapa en ny klient och anslut till servern
         var client = new MongoClient(settings);
-        // Send a ping to confirm a successful connection
+        
+        // Skicka en ping för att bekräfta en lyckad anslutning
         try
         {
             var result = client.GetDatabase("admin").RunCommand<BsonDocument>(new BsonDocument("ping", 1));
@@ -442,12 +447,16 @@ class Program
         {
             Console.WriteLine(ex);
         }
-        // anslut till databasen
+        // anslut till den önskade databasen
         var database = client.GetDatabase("testing");
-        //anslut till kollektion
+        
+        // Anslut till den önskade kollektionen (i detta fall, "messages")
         IMongoCollection<Messages> collection = database.GetCollection<Messages>("messages");
 
+        // Hämta befintliga meddelanden för användaren från databasen
         Messages existingMessages = collection.Find(x => x.UserName == username).FirstOrDefault();
+        
+        // Om det inte finns befintliga meddelanden för användaren, skapa en temporär instans och lägg till den i databasen
         if (existingMessages == null)
         {
             Random random = new Random();
@@ -456,37 +465,39 @@ class Program
             collection.InsertOne(tempMessage);
             return tempMessage;
         }
+        // Returnera befintliga meddelanden om de finns
         return existingMessages;
     }
 
 
-    //Dictionary för commands
+    // Dictionary för att koppla kommandon till åtgärder (Actions)
     static Dictionary<string, Action<string, NetworkStream>> commandActions = new Dictionary<string, Action<string, NetworkStream>>()
                 {
-                    { "register", RegisterUser},
-                    { "login", LoginUser},
-                    { "send", SendMessage},
-                    { "sendPrivate", SendPrivateMessage},
+                    { "register", RegisterUser}, //Koppla "register"-kommandot till RegisterUser-metoden
+                    { "login", LoginUser}, //Koppla "login"-kommandot till LoginUser-metoden
+                    { "send", SendMessage}, //Koppla "send"-kommandot till SendMessage-metoden
+                    { "sendPrivate", SendPrivateMessage}, // Koppl "sendPrivate"-klommandot till SendPrivateMessage-metoden
                 };
 
-    //Dictionary för att servern ska hålla koll på vilken användare som är vilken
+    // Dictionary för att hålla koll på vilken nätverksström som är kopplad till varje användare
     static Dictionary<string, NetworkStream> userStreams = new Dictionary<string, NetworkStream>();
 
 }
-
+// Klass som representerar en användare med tre egenskaper: Id, UserName och Password
 class User
 {
     public int Id { get; set; }
     public string UserName { get; set; }
     public string Password { get; set; }
 }
-
+// Klass som representerar meddelanden för en användare med tre egenskaper: Id, UserName och en lista av användarmeddelanden
 class Messages
 {
     public int Id { get; set; }
     public string UserName { get; set; }
     public List<string> UserMessages { get; set; }
 
+    // Konstruktor för Messages-klassen som används för att skapa en instans av klassen med specifika värden
     public Messages(int id, string userName, List<string> userMessages)
     {
         Id = id;
