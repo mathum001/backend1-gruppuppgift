@@ -132,23 +132,33 @@ namespace Client
             SendData(stream, dataToSend);
         }
 
+        // Funktion för att skicka data till servern via en nätverksström
         static void SendData(NetworkStream stream, string data)
         {
-            // Send the data to the server
+            // Konvertera textdata till byte-array
             byte[] dataToSend = Encoding.ASCII.GetBytes(data);
+            // Skicka data till servern
             stream.Write(dataToSend, 0, dataToSend.Length);
         }
 
+        // Funktion för att kontinuerligt ta emot meddelanden från servern och skriva dem till konsolen
         static void ReceiveMessages(NetworkStream stream)
         {
             try
             {
+                // Buffer för att ta emot data från servern
                 byte[] buffer = new byte[1024];
+
+                // Kontinuerligt lyssna på meddelanden från servern
                 while (true)
                 {
+                    // Läs in data från nätverksströmmen
                     int bytesRead = stream.Read(buffer, 0, buffer.Length);
+
+                    // Om det finns inläst data
                     if (bytesRead > 0)
                     {
+                        // Konvertera byte-array till text och skriv ut meddelandet
                         string message = Encoding.ASCII.GetString(buffer, 0, bytesRead);
                         Console.WriteLine(message);
                     }
@@ -156,6 +166,7 @@ namespace Client
             }
             catch (Exception e)
             {
+                // Skriv ut felmeddelande om det uppstår ett problem med att ta emot meddelanden
                 Console.WriteLine("Error receiving message from server: " + e.Message);
             }
         }
