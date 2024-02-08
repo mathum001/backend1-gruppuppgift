@@ -105,25 +105,29 @@ namespace Client
             SendData(stream, dataToSend);
         }
 
+        // Funktion för att skicka ett broadcast-meddelande till servern
         static void BroadcastMessage(NetworkStream stream)
         {
+            // Be användaren ange meddelandet
             Console.WriteLine("Enter your message:");
             string message = Console.ReadLine();
 
-            // Send broadcast message to the server
+            // Skicka broadcast-meddelandet till servern
             string dataToSend = $"send {message}";
             SendData(stream, dataToSend);
         }
-
+        //Funktion för att skicka privat-meddelande till en specifik användare
         static void SendPrivateMessage(NetworkStream stream)
         {
+            // Be användaren ange mottagarens användarnamn
             Console.WriteLine("Enter recipient's username:");
             string recipient = Console.ReadLine();
 
+            // Be användaren ange det privata meddelandet
             Console.WriteLine("Enter your private message:");
             string message = Console.ReadLine();
 
-            // Send private message to the server
+            // Skicka det privata meddelandet till servern
             string dataToSend = $"sendPrivate {recipient} {message}";
             SendData(stream, dataToSend);
         }
