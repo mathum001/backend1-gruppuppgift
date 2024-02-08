@@ -16,11 +16,14 @@ namespace Client
         {
             try
             {
+                // Skapa en TcpClient för att ansluta till servern
                 TcpClient client = new TcpClient("127.0.0.1", 8080);
                 Console.WriteLine("Connected to the server.");
 
+                // Hämta NetworkStream för att skicka och ta emot data
                 NetworkStream stream = client.GetStream();
 
+                // Användaren väljer att registrera eller logga in
                 while (true)
                 {
                     Console.WriteLine("Enter 'register' or 'login':");
@@ -42,10 +45,11 @@ namespace Client
                     }
                 }
 
-                //Ny tråd som lyssnar på medd från servern
+                // Skapa en ny tråd för att lyssna på meddelanden från servern
                 Thread receiveThread = new Thread(() => ReceiveMessages(stream));
                 receiveThread.Start();
 
+                // Användaren väljer att skicka broadcast eller privat meddelande
                 while (true)
                 {
                     Console.WriteLine("Enter 'send' to broadcast or 'private' for a private message:");
@@ -61,6 +65,7 @@ namespace Client
                     }
                     else
                     {
+                        // Stäng klienten om ett ogiltigt kommando anges
                         client.Close();
                         break;
                     }
@@ -68,6 +73,7 @@ namespace Client
             }
             catch (Exception e)
             {
+                // Visa felmeddelande om något går fel
                 Console.WriteLine("Error: " + e.Message);
             }
         }
