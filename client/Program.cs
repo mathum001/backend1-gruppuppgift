@@ -77,27 +77,30 @@ namespace Client
                 Console.WriteLine("Error: " + e.Message);
             }
         }
-
+        // Funktion för att registrera en ny användare
         static void RegisterUser(NetworkStream stream)
         {
+            // Be användaren ange användarnamn och lösenord
             Console.WriteLine("Enter username:");
             string username = Console.ReadLine();
             Console.WriteLine("Enter password:");
             string password = Console.ReadLine();
 
-            // Send registration data to the server
+            // Skicka registreringsdata till servern
             string dataToSend = $"register {username} {password}";
             SendData(stream, dataToSend);
         }
 
+        // Funktion för att logga in en användare
         static void LoginUser(NetworkStream stream)
         {
+            // Be användaren ange användarnamn och lösenord
             Console.WriteLine("Enter username:");
             string username = Console.ReadLine();
             Console.WriteLine("Enter password:");
             string password = Console.ReadLine();
 
-            // Send login data to the server
+            // Skicka inloggningsdata till servern
             string dataToSend = $"login {username} {password}";
             SendData(stream, dataToSend);
         }
